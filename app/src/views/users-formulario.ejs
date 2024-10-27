@@ -1,0 +1,141 @@
+<%- include('includes/head') %>
+
+    <div style="display: flex; flex-direction: row; align-items: flex-start; width: 100%; margin: 20px;">
+        <button onclick="window.location.href='/users?page=1'"
+            style="color: white; width: 10%; cursor: pointer; display: flex; flex-direction: row; align-items: center; justify-content: center ;gap: 5px; background-color: #2563eb; padding: 2px; border-radius: 10px;">
+            <ion-icon style="font-size: large;" name="arrow-back-circle"></ion-icon>
+            <div>Voltar</div>
+        </button><br>
+    </div>
+
+    <h1 style="margin: 20px;" class="text-center text-3xl font-semibold">
+        <%= data.title %>
+    </h1>
+
+    <div
+        style="padding: 10px;display: flex; flex-direction: column; align-items: center; justify-content: center; width: 60%; margin: auto;">
+        <form action="/users/addUser" method="post" style="display: flex; gap:3px; flex-direction: column;">
+
+            <label class="font-semibold" for="name">Nome: </label><br>
+            <input type="text" name="name" required><br>
+
+            <label class="font-semibold" for="cpf">CPF: </label><br>
+            <input type="text" name="cpf" pattern="[0-9]{11}" maxlength="11" required><br>
+
+            <label class="font-semibold" for="role">Tipo de usuário:</label><br>
+            <select style="padding: 5px;" name="role" required>
+                <option value="Cliente">Cliente</option>
+                <option value="Administrador">Administrador</option>
+            </select><br>
+
+            <label class="font-semibold" for="phone">Telefone Principal</label><br>
+            <input type="tel" name="phone" pattern="[0-9]{11}" maxlength="11" required><br>
+            <label class="font-semibold">Telefones Secundários</label><br>
+            <div id="secondaryPhones" style="display: flex; flex-direction: column; gap:5px;"></div>
+            <br>
+            <div onclick="createSecondaryPhones()"
+                style="color: white; width: 60%; cursor: pointer; display: flex; flex-direction: row; align-items: center; justify-content: center ;gap: 5px; background-color:#2563eb; padding: 2px; border-radius: 10px; margin-top: 5px;">
+                <ion-icon style="font-size: large;" name="add"></ion-icon>
+                <div>Adicionar</div>
+            </div><br>
+
+            <label class="font-semibold" for="email">Email Principal</label><br>
+            <input type="email" name="email" required><br>
+            <label class="font-semibold">Emails Secundários</label><br>
+            <div id="secondaryEmails" style="display: flex; flex-direction: column; gap:5px;"></div>
+            <br>
+            <div onclick="createSecondaryEmails()"
+                style="color: white; width: 60%; cursor: pointer; display: flex; flex-direction: row; align-items: center; justify-content: center ;gap: 5px; background-color: #2563eb; padding: 2px; border-radius: 10px; margin-top: 5px;">
+                <ion-icon style="font-size: large;" name="add"></ion-icon>
+                <div>Adicionar</div>
+            </div><br>
+
+            <button
+                style="color: white; padding: 5px; text-align: center; background-color: #2563eb; margin: 10px; border-radius: 10px;"
+                type="submit">Cadastrar</button>
+        </form>
+    </div>
+    </body>
+    <script>
+        let indexPhone = 1;
+        let indexEmail = 1;
+        let space = document.createElement("br");
+
+        function createSecondaryPhones() {
+            let divPhone = document.getElementById("secondaryPhones");
+            let divSecPhones = document.createElement("div");
+            divSecPhones.setAttribute("id", "phone" + indexPhone);
+            divSecPhones.setAttribute("class", "positionLabel")
+
+            let phones = document.createElement("label");
+            phones.setAttribute("for", "secondaryPhone");
+            phones.innerText = "Telefone Secundario " + indexPhone;
+            divSecPhones.appendChild(phones);
+
+            let divPhoneIcon = document.createElement("div");
+
+            let inputPhones = document.createElement("input");
+            inputPhones.setAttribute("type", "tel");
+            inputPhones.setAttribute("name", "secondaryPhone");
+            inputPhones.setAttribute("pattern", "[0-9]{11}");
+            inputPhones.setAttribute("maxlength", 11);
+            inputPhones.required = "true";
+            divPhoneIcon.appendChild(inputPhones);
+
+            let icon = document.createElement("ion-icon");
+            icon.style.color = "#FF3F3A";
+            icon.style.cursor = "pointer";
+            icon.style.fontSize = "medium";
+            icon.style.marginLeft = "5px";
+            icon.setAttribute("name", "trash");
+            icon.addEventListener("click", () => {
+                divSecPhones.remove();
+            });
+            divPhoneIcon.appendChild(icon);
+
+            divSecPhones.appendChild(divPhoneIcon);
+
+            divPhone.appendChild(divSecPhones);
+
+            indexPhone++
+        }
+
+        function createSecondaryEmails() {
+            let divEmail = document.getElementById("secondaryEmails");
+            let divSecEmails = document.createElement("div");
+            divSecEmails.setAttribute("id", "email" + indexEmail);
+            divSecEmails.setAttribute("class", "positionLabel")
+
+            let emails = document.createElement("label");
+            emails.setAttribute("for", "secondaryEmail");
+            emails.innerText = "Email Secundario " + indexEmail;
+            divSecEmails.appendChild(emails);
+
+            let divEmailIcon = document.createElement("div");
+
+            let inputEmails = document.createElement("input");
+            inputEmails.setAttribute("type", "email");
+            inputEmails.setAttribute("name", "secondaryEmail");
+            inputEmails.required = "true";
+            divEmailIcon.appendChild(inputEmails);
+
+
+            let icon = document.createElement("ion-icon");
+            icon.style.color = "#FF3F3A";
+            icon.style.cursor = "pointer";
+            icon.style.fontSize = "medium";
+            icon.style.marginLeft = "5px";
+            icon.setAttribute("name", "trash");
+            icon.addEventListener("click", () => {
+                divSecEmails.remove();
+            });
+            divEmailIcon.appendChild(icon);
+
+            divSecEmails.appendChild(divEmailIcon);
+
+            divEmail.appendChild(divSecEmails);
+            indexEmail++
+        }        
+    </script>
+
+    </html>

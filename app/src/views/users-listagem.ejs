@@ -1,0 +1,155 @@
+<%- include('includes/head') %>
+
+    <div class="container mx-auto mt-8">
+        <form action="/users" method="post"
+            style="display: flex;flex-direction: row; align-items: center; width: 100%;">
+            <button type="submit"
+                style="cursor: pointer; background-color: #2563eb; padding: 12px; border-radius: 5px 0px 0px 5px;font-size: larger; color: white;width: 80px; display: flex;align-items: center;justify-content: center;">
+                <ion-icon name="search"></ion-icon>
+            </button>
+            <input style="padding: 10px; width: 100%;" type="text" name="search"
+                placeholder="Burcar pelo nome do usuário">
+            <div class="font-semibold" onclick="window.location.href='/users?page=1'"
+                style="cursor: pointer; background-color: #FF3F3A; padding: 10px; border-radius: 0px 5px 5px 0px;color: white;width: 90px; text-align: center;">
+                Limpar
+            </div>
+        </form>
+        <div class="bg-white shadow-md rounded my-6">
+            <table class="min-w-full table-auto">
+                <thead>
+                    <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                        <th class="py-3 px-6 text-left">ID</th>
+                        <th class="py-3 px-6 text-left">Name</th>
+                        <th class="py-3 px-6 text-left">CPF</th>
+                        <th class="py-3 px-6 text-left">Email</th>
+                        <th class="py-3 px-6 text-left">Phone</th>
+                        <th class="py-3 px-6 text-left">Role</th>
+                        <th class="py-3 px-6 text-left"></th>
+                    </tr>
+                </thead>
+                <% for (let i=data.initialIndex; i < data.endIndex; i++) { %>
+                    <tbody class="text-gray-600 text-sm font-light">
+                        <tr class="border-b border-gray-200 hover:bg-gray-100">
+                            <td class="py-3 px-6 text-left whitespace-nowrap">
+                                <%= data.users[i].id %>
+                            </td>
+                            <td class="py-3 px-6 text-left">
+                                <%= data.users[i].name %>
+                            </td>
+                            <td class="py-3 px-6 text-left">
+                                <%= data.users[i].cpf %>
+                            </td>
+                            <td class="py-3 px-6 text-left">
+                                <%= data.users[i].email %>
+                            </td>
+                            <td class="py-3 px-6 text-left">
+                                <%= data.users[i].phone %>
+                            </td>
+                            <td class="py-3 px-6 text-left">
+                                <%= data.users[i].role %>
+                            </td>
+                            <td>
+                                <ion-icon style="color:#2563eb; cursor: pointer; font-size: medium;" name="person"
+                                    onclick="window.location.href='/users/user/<%= data.users[i].id %>'"></ion-icon>
+                                <ion-icon style="color:#5ab505; cursor: pointer; font-size: medium;" name="create"
+                                    onclick="window.location.href='/users/updateUser/<%= data.users[i].id %>'"></ion-icon>
+                                <% if (data.users[i].role !='Administrador' ) { %>
+                                    <ion-icon style="color:#FF3F3A; cursor: pointer; font-size: medium;" name="trash"
+                                        onclick="deleteUser('<%= data.users[i].id %>','<%= data.users[i].name %>')"></ion-icon>
+                                    <% } %>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                    <% } %>
+            </table>
+        </div>
+
+        <div class="flex justify-between items-center mt-4" id="allPagination">
+            <span class="text-sm text-gray-600" id="pagination"> </span>
+            <nav class="inline-flex shadow-sm">
+                <button onclick="previous()" class="px-3 py-1 bg-gray-300 text-gray-800 rounded-l-md"
+                    id="previous">Previous</button>
+                <button class="px-3 py-1 bg-gray-300 text-gray-800" id="currentPage">1</button>
+                <button id="next" onclick="next()"
+                    class="px-3 py-1 bg-gray-300 text-gray-800 rounded-r-md">Next</button>
+            </nav>
+        </div>
+
+        <div style="display: flex;width: 100%;align-items: center;justify-content: center;">
+            <button onclick="window.location.href='/users/addUser'"
+                style="color: white; width: 13%; cursor: pointer; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 5px; background-color: #2563eb; padding: 5px; border-radius: 10px;">
+                <ion-icon style="font-size: large;" name="person-add"></ion-icon>
+                <div>Novo Usuário</div>
+            </button><br>
+        </div>
+
+
+    </div>
+    </body>
+
+    <script>
+        let pagination = parseInt('<%= data.page %>');
+        let numberOfPages = parseInt('<%= data.users.length %>' / 5);
+
+        if ('<%= data.users.length %>' % 5 != 0) {
+            numberOfPages++;
+        }
+
+        if (pagination == 0) {
+            let divAllPagination = document.getElementById("allPagination").style.display = "none";
+        }
+
+        let divPagination = document.getElementById("pagination").innerHTML = "Página " + pagination + " de " + numberOfPages;
+        let currentPage = document.getElementById("currentPage").innerHTML = pagination;
+        let previousButton = document.getElementById("previous");
+        let nextButton = document.getElementById("next");
+        controllerButtons();
+
+        function controllerButtons() {
+            if (pagination == numberOfPages) {
+                nextButton.disabled = true;
+                nextButton.style.color = "#F3F4F5";
+            } else {
+                nextButton.disabled = false;
+                nextButton.style.color = "#1f2937";
+            }
+
+            if (pagination == 1) {
+                previousButton.disabled = true;
+                previousButton.style.color = "#F3F4F5";
+            } else {
+                previousButton.disabled = false;
+                previousButton.style.color = "#1f2937";
+            }
+        }
+
+        function next() {
+            if (pagination < numberOfPages) {
+                pagination++;
+                currentPage = document.getElementById("currentPage").innerHTML = pagination;
+                divPagination = document.getElementById("pagination").innerHTML = "Página " + pagination + " de " + numberOfPages;
+                window.location.href = '/users?page=' + pagination;
+                controllerButtons();
+            }
+        }
+
+        function previous() {
+            if (pagination > 1) {
+                pagination--;
+                currentPage = document.getElementById("currentPage").innerHTML = pagination;
+                divPagination = document.getElementById("pagination").innerHTML = "Página " + pagination + " de " + numberOfPages;
+                window.location.href = '/users?page=' + pagination;
+                controllerButtons();
+            }
+        }
+
+        function deleteUser(id, nome) {
+            if (window.confirm("Você deseja apagar o usuário " + nome + "?")) {
+                fetch('/users/deleteUser/' + id, { method: 'DELETE' }).then(res => { window.location.href = '/users?page=1' });
+            }
+        }
+
+    </script>
+
+    </html>
